@@ -11,6 +11,23 @@ def home():
     return render_template("Home.html", data=stations.to_html())
 
 
+@app.route("/api/v1/<station>")
+def sta_data(station):
+    filename = filename = "data_small/TG_STAID" + str(station).zfill(6) + ".txt"
+    df = pd.read_csv(filename, skiprows=20, parse_dates=["    DATE"])
+    result = df.to_dict(orient="records")
+    return result
+
+
+@app.route("/api/v1/yearly/<station>/<year>")
+def tearly(station, year):
+    filename = filename = "data_small/TG_STAID" + str(station).zfill(6) + ".txt"
+    df = pd.read_csv(filename, skiprows=20)
+    df["    DATE"] = df["    DATE"].astype(str)
+    result = df.loc[df["    DATE"].str.startswith(str(year))].to_dict(orient="records")
+    return result
+
+
 @app.route("/api/v1/<station>/<date>")
 def about(station, date):
     filename = "data_small/TG_STAID" + str(station).zfill(6) + ".txt"
